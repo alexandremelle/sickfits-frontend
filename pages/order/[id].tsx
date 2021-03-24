@@ -4,6 +4,7 @@ import Head from 'next/head';
 import ErrorMessage from '../../components/ErrorMessage';
 import OrderStyles from '../../components/styles/OrderStyles';
 import formatMoney from '../../lib/formatMoney';
+import { QueryIdProps } from '../../types/types';
 
 const SINGLE_ORDER_QUERY = gql`
   query SINGLE_ORDER_QUERY($id: ID!) {
@@ -29,7 +30,7 @@ const SINGLE_ORDER_QUERY = gql`
     }
   }
 `;
-export default function SingleOrderPage({ query }) {
+export default function SingleOrderPage({ query }: QueryIdProps): JSX.Element {
   const { data, error, loading } = useQuery(SINGLE_ORDER_QUERY, {
     variables: { id: query.id },
   });
