@@ -42,7 +42,7 @@ function countItemsInAnOrder(order) {
   return order.items.reduce((acc, item) => acc + item.quantity, 0);
 }
 
-export default function OrdersPage() {
+export default function OrdersPage(): JSX.Element {
   const { data, error, loading } = useQuery(USER_ORDERS_QUERY);
   if (loading) return <p>Chargement...</p>;
   if (error) return <ErrorMessage error={error} />;
