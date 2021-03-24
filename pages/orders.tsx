@@ -50,7 +50,7 @@ export default function OrdersPage() {
   return (
     <div>
       <Head>
-        <title>Vos commandes ({allOrders.length})</title>
+        <title>Sick Fits | commandes)</title>
       </Head>
       <h2 style={{ textAlign: 'center' }}>
         {allOrders.length === 0
