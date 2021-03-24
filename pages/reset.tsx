@@ -1,7 +1,13 @@
 import RequestReset from '../components/RequestReset';
 import Reset from '../components/Reset';
 
-export default function ResetPage({ query }) {
+type ResetPageProps = {
+  query: {
+    token: string;
+  };
+};
+
+export default function ResetPage({ query }: ResetPageProps): JSX.Element {
   if (!query?.token) {
     return (
       <div>
