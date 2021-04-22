@@ -1,12 +1,7 @@
 import UpdateProduct from '../components/UpdateProduct';
+import { QueryIdProps } from '../types/types';
 
-type UpdatePageProps = {
-  query: {
-    id: string;
-  }
-}
-
-export default function UpdatePage({ query }: UpdatePageProps): JSX.Element {
+export default function UpdatePage({ query }: QueryIdProps) {
   console.log(query);
   return (
     <div>

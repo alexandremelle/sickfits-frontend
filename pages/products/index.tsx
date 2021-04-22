@@ -2,8 +2,14 @@ import { useRouter } from 'next/dist/client/router';
 import Pagination from '../../components/Pagination';
 import Products from '../../components/Products';
 
+type ProductPageProps = {
+  query: {
+    page?: string;
+  };
+};
+
 export default function OrderPage() {
-  const { query } = useRouter();
+  const { query }: ProductPageProps = useRouter();
   const page = parseInt(query.page);
   return (
     <div>

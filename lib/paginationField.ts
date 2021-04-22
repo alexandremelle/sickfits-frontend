@@ -1,14 +1,32 @@
-import { PAGINATION_QUERY } from '../components/Pagination';
 
-export default function paginationField() {
+import { FieldPolicy, gql, Reference } from '@apollo/client';
+
+type KeyArgs = FieldPolicy<any>["keyArgs"];
+
+type Data = {
+  _allProductsMeta: {
+    count: number
+  }
+}
+
+export default function paginationField<T = Reference>(
+  keyArgs: KeyArgs = false,
+): FieldPolicy<T[]> {
   return {
-    keyArgs: false, // tells apollo we will take care of everything
+    keyArgs, // tells apollo we will take care of everything
     read(existing = [], { args, cache }) {
       // console.log({ existing, args, cache });
       const { skip, first } = args;
-
+      const data: Data = cache.readQuery({
+        query: gql`
+          query {
+            _allProductsMeta {
+              count
+            }
+          }
+        `,
+      });
       // Read the number of items on the page from the cache
-      const data = cache.readQuery({ query: PAGINATION_QUERY });
       const count = data?._allProductsMeta?.count;
       const page = skip / first + 1;
       const pages = Math.ceil(count / first);
@@ -26,7 +44,7 @@ export default function paginationField() {
       }
       if (items.length !== first) {
         // We don't have any items, we must go to the network to fetch them
-        return false;
+        return;
       }
 
       // If there are items, just reutrn them from the cache, and we don't need to go to the network
@@ -37,7 +55,7 @@ export default function paginationField() {
         return items;
       }
 
-      return false; // fallback to network
+      return; // fallback to network
 
       // First thing it does it asks the read function for those items.
       // We can either do one of two things:
@@ -45,9 +63,9 @@ export default function paginationField() {
       // The other thing we can do is to return false from here, (network request)
     },
     merge(existing, incoming, { args }) {
-      const { skip, first } = args;
+      const { skip } = args;
       // This runs when the Apollo client comes back from the network with our product
-      // console.log(`MErging items from the network ${incoming.length}`);
+      // console.log(`Merging items from the network ${incoming.length}`);
       const merged = existing ? existing.slice(0) : [];
       for (let i = skip; i < skip + incoming.length; ++i) {
         merged[i] = incoming[i - skip];

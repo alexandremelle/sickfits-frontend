@@ -9,7 +9,7 @@ const GridStyles = styled.div`
   grid-gap: 2rem;
 `;
 
-export default function SignInPage(): JSX.Element {
+export default function SignInPage() {
   return (
     <GridStyles>
       <SignIn />

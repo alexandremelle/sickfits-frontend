@@ -7,7 +7,7 @@ type ResetPageProps = {
   };
 };
 
-export default function ResetPage({ query }: ResetPageProps): JSX.Element {
+export default function ResetPage({ query }: ResetPageProps) {
   if (!query?.token) {
     return (
       <div>

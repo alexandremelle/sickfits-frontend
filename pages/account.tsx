@@ -1,6 +1,6 @@
 import Head from "next/head";
 
-export default function AccountPage(): JSX.Element  {
+export default function AccountPage() {
   return( 
   <div>
     <Head>
