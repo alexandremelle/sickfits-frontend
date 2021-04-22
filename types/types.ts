@@ -5,3 +5,7 @@ export type QueryIdProps = {
     id: string;
   }
 }
+
+export type IdProps = {
+    id: string;
+}
