@@ -8,7 +8,7 @@ import { useAllProductsCountQuery } from '../types/generated-queries';
 
 export default function Pagination({ page }: { page: number}) {
   const { data, loading, error } = useAllProductsCountQuery();
-  if (loading) return 'Chargement...';
+  if (loading) return <p>Chargement...</p>;
   if (error) return <DisplayError error={error} />;
   const { count } = data._allProductsMeta;
   const pageCount = Math.ceil(count / perPage);
