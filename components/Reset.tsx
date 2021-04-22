@@ -1,45 +1,28 @@
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
 import Form from './styles/Form';
 import useForm from '../lib/useForm';
 import Error from './ErrorMessage';
+import { useRedeemPasswordResetMutation } from '../types/generated-queries';
+import { SyntheticEvent } from 'react';
 
-const RESET_MUTATION = gql`
-  mutation RESET_MUTATION(
-    $email: String!
-    $password: String!
-    $token: String!
-  ) {
-    redeemUserPasswordResetToken(
-      email: $email
-      token: $token
-      password: $password
-    ) {
-      code
-      message
-    }
-  }
-`;
-
-export default function Reset({ token }) {
+export default function Reset({ token }: { token: string }) {
   const { inputs, handleChange, resetForm } = useForm({
     email: '',
     password: '',
     token,
   });
-  const [reset, { data, loading, error }] = useMutation(RESET_MUTATION, {
-    variables: inputs,
+  const [reset, { data, loading, error }] = useRedeemPasswordResetMutation({
+    variables: {
+      email: inputs.email,
+      password: inputs.password,
+      token: inputs.token,
+    },
   });
   const successfulError = data?.redeemUserPasswordResetToken?.code
     ? data?.redeemUserPasswordResetToken
     : undefined;
-  console.log(error);
-  async function handleSubmit(e) {
-    e.preventDefault(); // stop the form from submitting
-    console.log(inputs);
-    const res = await reset().catch(console.error);
-    console.log(res);
-    console.log({ data, loading, error });
+  async function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault(); // stop the form from submitting
+    await reset().catch(console.error);
     resetForm();
     // Send the email and password to the graphqlAPI
   }
@@ -47,7 +30,7 @@ export default function Reset({ token }) {
     <Form method="POST" onSubmit={handleSubmit}>
       <h2>Réinitialiser votre mot de passe</h2>
       <Error error={error || successfulError} />
-      <fieldset>
+      <fieldset disabled={loading} aria-busy={loading}>
         {data?.redeemUserPasswordResetToken === null && (
           <p>
             Mot de passe réinitialisé! Vous pouvez maintenant vous connecter

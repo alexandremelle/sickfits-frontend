@@ -1,21 +1,13 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import Head from 'next/head';
 import Link from 'next/link';
 import PaginationStyles from './styles/PaginationStyles';
 import DisplayError from './ErrorMessage';
 import { perPage } from '../config';
+import { useAllProductsCountQuery } from '../types/generated-queries';
 
-export const PAGINATION_QUERY = gql`
-  query PAGINATION_QUERY {
-    _allProductsMeta {
-      count
-    }
-  }
-`;
 
-export default function Pagination({ page }) {
-  const { error, loading, data } = useQuery(PAGINATION_QUERY);
+export default function Pagination({ page }: { page: number}) {
+  const { data, loading, error } = useAllProductsCountQuery();
   if (loading) return 'Chargement...';
   if (error) return <DisplayError error={error} />;
   const { count } = data._allProductsMeta;

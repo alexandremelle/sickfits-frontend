@@ -5,8 +5,11 @@ import PriceTag from './styles/PriceTag';
 import formatMoney from '../lib/formatMoney';
 import DeleteProduct from './DeleteProduct';
 import AddToCart from './AddToCart';
+import { Product as productType } from '../types/generated-queries';
 
-export default function Product({ product }) {
+type ProductProps = { product: productType };
+
+export default function Product({ product }: ProductProps) {
   return (
     <ItemStyles>
       <img

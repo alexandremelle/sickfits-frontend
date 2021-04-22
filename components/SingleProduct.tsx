@@ -1,5 +1,3 @@
-import { useQuery } from '@apollo/client';
-import gql from 'graphql-tag';
 import Head from 'next/head';
 import styled from 'styled-components';
 import formatMoney from '../lib/formatMoney';
@@ -7,6 +5,8 @@ import AddToCart from './AddToCart';
 import DisplayError from './ErrorMessage';
 import ItemStyles from './styles/ItemStyles';
 import PriceTag from './styles/PriceTag';
+import { useProductQuery } from '../types/generated-queries';
+import { IdProps } from '../types/types';
 
 const ProductStyles = styled.div`
   display: grid;
@@ -22,26 +22,8 @@ const ProductStyles = styled.div`
   }
 `;
 
-const SINGLE_ITEM_QUERY = gql`
-  query SINGLE_ITEM_QUERY($id: ID!) {
-    Product(where: { id: $id }) {
-      name
-      price
-      description
-      id
-      photo {
-        id
-        altText
-        image {
-          publicUrlTransformed
-        }
-      }
-    }
-  }
-`;
-
-export default function SingleProduct({ id }) {
-  const { data, loading, error } = useQuery(SINGLE_ITEM_QUERY, {
+export default function SingleProduct({ id }: IdProps) {
+  const { data, loading, error } = useProductQuery({
     variables: {
       id,
     },

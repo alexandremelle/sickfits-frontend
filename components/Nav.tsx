@@ -1,10 +1,10 @@
 import Link from 'next/link';
 import { FaShoppingCart } from 'react-icons/fa';
-import { useCart } from '../lib/cartState';
+import useCart from '../hooks/useCart';
 import CartCount from './CartCount';
 import SignOut from './SignOut';
 import NavStyles from './styles/NavStyles';
-import { useUser } from './User';
+import { useUser } from '../hooks/useUser';
 
 export default function Nav() {
   const user = useUser();

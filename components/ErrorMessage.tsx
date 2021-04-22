@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import React from 'react';
-
 import PropTypes from 'prop-types';
+import { ApolloError } from '@apollo/client';
+import { RedeemUserPasswordResetTokenResult, UserAuthenticationWithPasswordFailure } from '../types/generated-queries';
 
 const ErrorStyles = styled.div`
   padding: 2rem;
@@ -18,27 +18,24 @@ const ErrorStyles = styled.div`
   }
 `;
 
-const DisplayError = ({ error }) => {
+type DisplayErrorProps = {
+  error:
+    | ApolloError
+    | UserAuthenticationWithPasswordFailure
+    | RedeemUserPasswordResetTokenResult;
+};
+
+function DisplayError({ error }: DisplayErrorProps) {
   if (!error || !error.message) return null;
-  if (error.networkError && error.networkError.result && error.networkError.result.errors.length) {
-    return error.networkError.result.errors.map((error, i) => (
-      <ErrorStyles key={i}>
-        <p data-test="graphql-error">
-          <strong>Shoot!</strong>
-          {error.message.replace('GraphQL error: ', '')}
-        </p>
-      </ErrorStyles>
-    ));
-  }
   return (
     <ErrorStyles>
       <p data-test="graphql-error">
-        <strong>Shoot!</strong>
-        {error.message.replace('GraphQL error: ', '')}
+        <strong>Oups!</strong>
+        {error.message.replace('Erreur GraphQL: ', '')}
       </p>
     </ErrorStyles>
-  );
-};
+  )
+}
 
 DisplayError.defaultProps = {
   error: {},

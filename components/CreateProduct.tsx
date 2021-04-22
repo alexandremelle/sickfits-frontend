@@ -1,58 +1,32 @@
-import { useMutation } from '@apollo/client';
-import gql from 'graphql-tag';
 import Router from 'next/router';
+import { SyntheticEvent } from 'react';
 import useForm from '../lib/useForm';
+import { refetchAllProductsQuery, useCreateProductMutation } from '../types/generated-queries';
 import DisplayError from './ErrorMessage';
-import { ALL_PRODUCTS_QUERY } from './Products';
 import Form from './styles/Form';
 
-const CREATE_PRODUCT_MUTATION = gql`
-  mutation CREATE_PRODUCT_MUTATION(
-    # Which variables are getting passed in? And What types are they
-    $name: String!
-    $description: String!
-    $price: Int!
-    $image: Upload
-  ) {
-    createProduct(
-      data: {
-        name: $name
-        description: $description
-        price: $price
-        status: "AVAILABLE"
-        photo: { create: { image: $image, altText: $name } }
-      }
-    ) {
-      id
-      price
-      description
-      name
-    }
-  }
-`;
-
 export default function CreateProduct() {
-  const { inputs, handleChange, clearForm, resetForm } = useForm({});
-  const [createProduct, { loading, error, data }] = useMutation(
-    CREATE_PRODUCT_MUTATION,
-    {
-      variables: inputs,
-      refetchQueries: [{ query: ALL_PRODUCTS_QUERY }],
-    }
-  );
+  const { inputs, handleChange, clearForm } = useForm({});
+  const [createProductMutation, { data, loading, error }] = useCreateProductMutation({
+    variables: {
+      name: inputs.name,
+      price: inputs.price,
+      description: inputs.description,
+    },
+    refetchQueries: [refetchAllProductsQuery()],
+  });
+
+  async function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault();
+    await createProductMutation();
+    clearForm();
+    void Router.push({
+      pathname: `/product/${data.createProduct.id}`,
+    });
+  }
+
   return (
-    <Form
-      onSubmit={async (e) => {
-        e.preventDefault();
-        // Submit the inputfields to the backend:
-        const res = await createProduct();
-        clearForm();
-        // Go to that product's page!
-        Router.push({
-          pathname: `/product/${res.data.createProduct.id}`,
-        });
-      }}
-    >
+    <Form onSubmit={handleSubmit}>
       <DisplayError error={error} />
       <fieldset disabled={loading} aria-busy={loading}>
         <label htmlFor="image">

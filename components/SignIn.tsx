@@ -1,44 +1,25 @@
-import gql from 'graphql-tag';
-import { useMutation } from '@apollo/client';
-import { Router } from 'next/router';
 import Form from './styles/Form';
 import useForm from '../lib/useForm';
-import { CURRENT_USER_QUERY } from './User';
 import Error from './ErrorMessage';
-
-const SIGNIN_MUTATION = gql`
-  mutation SIGNIN_MUTATION($email: String!, $password: String!) {
-    authenticateUserWithPassword(email: $email, password: $password) {
-      ... on UserAuthenticationWithPasswordSuccess {
-        item {
-          id
-          email
-          name
-        }
-      }
-      ... on UserAuthenticationWithPasswordFailure {
-        code
-        message
-      }
-    }
-  }
-`;
+import { useSignInMutation, refetchUserQuery } from '../types/generated-queries';
+import { SyntheticEvent } from 'react';
 
 export default function SignIn() {
   const { inputs, handleChange, resetForm } = useForm({
     email: '',
     password: '',
   });
-  const [signin, { data, loading }] = useMutation(SIGNIN_MUTATION, {
-    variables: inputs,
+  const [signin, { data, loading }] = useSignInMutation({
+    variables: {
+      email: inputs.email,
+      password: inputs.password
+    },
     // refetch the currently logged in user
-    refetchQueries: [{ query: CURRENT_USER_QUERY }],
+    refetchQueries: [refetchUserQuery()],
   });
-  async function handleSubmit(e) {
-    e.preventDefault(); // stop the form from submitting
-    console.log(inputs);
-    const res = await signin();
-    console.log(res);
+  async function handleSubmit(event: SyntheticEvent) {
+    event.preventDefault(); // stop the form from submitting
+    await signin();
     resetForm();
     window.location.href = '/';
     // Send the email and password to the graphqlAPI
@@ -52,7 +33,7 @@ export default function SignIn() {
     <Form method="POST" onSubmit={handleSubmit}>
       <h2>Se connecter</h2>
       <Error error={error} />
-      <fieldset>
+      <fieldset disabled={loading} aria-busy={loading}>
         <label htmlFor="email">
           Email
           <input

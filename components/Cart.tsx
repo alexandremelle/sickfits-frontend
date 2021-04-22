@@ -3,11 +3,12 @@ import CartStyles from './styles/CartStyles';
 import CloseButton from './styles/CloseButton';
 import Supreme from './styles/Supreme';
 import formatMoney from '../lib/formatMoney';
-import { useUser } from './User';
+import { CartItem as CartItemType } from '../types/generated-queries';
+import { useUser } from '../hooks/useUser';
 import calcTotalPrice from '../lib/calcTotalPrice';
-import { useCart } from '../lib/cartState';
 import RemoveFromCart from './RemoveFromCart';
 import { Checkout } from './Checkout';
+import useCart from '../hooks/useCart';
 
 const CartItemStyles = styled.li`
   padding: 1rem 0;
@@ -23,7 +24,9 @@ const CartItemStyles = styled.li`
   }
 `;
 
-function CartItem({ cartItem }) {
+type CartItemProps = { cartItem: CartItemType };
+
+function CartItem({ cartItem }: CartItemProps) {
   const { product } = cartItem;
   if (!product) return null;
   return (
