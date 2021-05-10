@@ -1,0 +1,8 @@
+import { CartItem } from "../types/generated-queries";
+
+export default function calcTotalPrice(cart: CartItem[]) {
+  return cart.reduce((acc, cartItem) => {
+    if (!cartItem.product) return acc; // products can be deleted, but they could still be in your cart
+    return acc + cartItem.quantity * cartItem.product.price;
+  }, 0);
+}
